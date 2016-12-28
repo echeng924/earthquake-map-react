@@ -21517,12 +21517,20 @@
 	      };
 	
 	      return _react2.default.createElement(
-	        _reactGoogleMaps.Marker,
+	        _reactGoogleMaps.Circle,
 	        {
 	          key: index,
-	          position: marker.position,
+	          center: marker.position,
+	          radius: 20000,
 	          title: (index + 1).toString(),
-	          onClick: onClick
+	          onClick: onClick,
+	          options: {
+	            fillColor: 'red',
+	            fillOpacity: 0.20,
+	            strokeColor: 'red',
+	            strokeOpacity: 1,
+	            strokeWeight: 1
+	          }
 	        },
 	        marker.showInfo && _react2.default.createElement(
 	          _reactGoogleMaps.InfoWindow,
@@ -21548,24 +21556,27 @@
 	  );
 	});
 	
-	function generateInitialMarkers() {
-	  var southWest = new google.maps.LatLng(-31.203405, 125.244141);
-	  var northEast = new google.maps.LatLng(-25.363882, 131.044922);
+	// function generateInitialMarkers() {
+	//   // const southWest = new google.maps.LatLng(-31.203405, 125.244141);
+	//   // const northEast = new google.maps.LatLng(-25.363882, 131.044922);
 	
-	  var lngSpan = northEast.lng() - southWest.lng();
-	  var latSpan = northEast.lat() - southWest.lat();
+	//   // const lngSpan = northEast.lng() - southWest.lng();
+	//   // const latSpan = northEast.lat() - southWest.lat();
 	
-	  var markers = [];
-	  for (var i = 0; i < 5; i++) {
-	    var position = new google.maps.LatLng(southWest.lat() + latSpan * Math.random(), southWest.lng() + lngSpan * Math.random());
-	    markers.push({
-	      position: position,
-	      content: 'This is the secret message'.split(' ')[i],
-	      showInfo: false
-	    });
-	  }
-	  return markers;
-	}
+	//   const markers = [];
+	//   for (let i = 0; i < this.state.earthquakes; i++) {
+	//     const position = new google.maps.LatLng(
+	//       this.state.earthquakes[i].geometry.coordinates[0],
+	//       this.state.earthquakes[i].geometry.coordinates[0]
+	//     );
+	//     markers.push({
+	//       position,
+	//       content: `This is the secret message`.split(` `)[i],
+	//       showInfo: false,
+	//     });
+	//   }
+	//   return markers;
+	// }
 	
 	var App = function (_Component) {
 	  _inherits(App, _Component);
@@ -21576,12 +21587,13 @@
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
 	    _this.state = {
-	      markers: generateInitialMarkers(),
-	      earthquakes: {}
+	      markers: [],
+	      earthquakes: []
 	    };
 	    _this.fetchData = _this.fetchData.bind(_this);
 	    _this.handleMarkerClick = _this.handleMarkerClick.bind(_this);
 	    _this.handleCloseClick = _this.handleCloseClick.bind(_this);
+	    _this.createMarkers = _this.createMarkers.bind(_this);
 	    return _this;
 	  }
 	
@@ -21593,20 +21605,45 @@
 	  }, {
 	    key: 'fetchData',
 	    value: function fetchData() {
-	      fetch('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson').then(function (response) {
-	        console.log(this);
+	      var _this2 = this;
+	
+	      fetch('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson').then(function (response) {
+	        console.log(_this2);
 	        if (response.status !== 200) {
 	          console.log('Problem with request ' + response.status);
 	          return;
 	        }
 	        response.json().then(function (data) {
 	          console.log(data);
-	          this.setState({
+	          _this2.setState({
 	            earthquakes: data.features
 	          });
-	        }.bind(this));
-	      }.bind(this)).catch(function (err) {
+	          _this2.createMarkers();
+	        });
+	      }).catch(function (err) {
 	        console.log('Fetch error', err);
+	      });
+	    }
+	  }, {
+	    key: 'createMarkers',
+	    value: function createMarkers() {
+	      var markers = [];
+	      // console.log(this.state.earthquakes);
+	      // console.log(this.state.earthquakes[0].geometry.coordinates[1]);
+	      for (var i = 0; i < this.state.earthquakes.length; i++) {
+	        //this.state.earthquakes.forEach(()
+	        var position = new google.maps.LatLng(this.state.earthquakes[i].geometry.coordinates[1], this.state.earthquakes[i].geometry.coordinates[0]);
+	        markers.push({
+	          position: position,
+	          content: 'This is the secret message'.split(' ')[i],
+	          showInfo: false,
+	          alert: this.state.earthquakes[i].properties.alert,
+	          mag: this.state.earthquake[i].properties.mag
+	        });
+	      }
+	      console.log(markers);
+	      this.setState({
+	        markers: markers
 	      });
 	    }
 	  }, {
