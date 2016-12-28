@@ -21501,23 +21501,145 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var SimpleMapExampleGoogleMap = (0, _reactGoogleMaps.withGoogleMap)(function (props) {
-	  return _react2.default.createElement(_reactGoogleMaps.GoogleMap, {
-	    defaultZoom: 8,
-	    defaultCenter: { lat: -34.397, lng: 150.644 }
-	  });
+	var ClosureListenersExampleGoogleMap = (0, _reactGoogleMaps.withGoogleMap)(function (props) {
+	  return _react2.default.createElement(
+	    _reactGoogleMaps.GoogleMap,
+	    {
+	      defaultZoom: 4,
+	      defaultCenter: new google.maps.LatLng(-25.363882, 131.044922)
+	    },
+	    props.markers.map(function (marker, index) {
+	      var onClick = function onClick() {
+	        return props.onMarkerClick(marker);
+	      };
+	      var onCloseClick = function onCloseClick() {
+	        return props.onCloseClick(marker);
+	      };
+	
+	      return _react2.default.createElement(
+	        _reactGoogleMaps.Marker,
+	        {
+	          key: index,
+	          position: marker.position,
+	          title: (index + 1).toString(),
+	          onClick: onClick
+	        },
+	        marker.showInfo && _react2.default.createElement(
+	          _reactGoogleMaps.InfoWindow,
+	          { onCloseClick: onCloseClick },
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              marker.content
+	            ),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	              'em',
+	              null,
+	              'The contents of this InfoWindow are actually ReactElements.'
+	            )
+	          )
+	        )
+	      );
+	    })
+	  );
 	});
+	
+	function generateInitialMarkers() {
+	  var southWest = new google.maps.LatLng(-31.203405, 125.244141);
+	  var northEast = new google.maps.LatLng(-25.363882, 131.044922);
+	
+	  var lngSpan = northEast.lng() - southWest.lng();
+	  var latSpan = northEast.lat() - southWest.lat();
+	
+	  var markers = [];
+	  for (var i = 0; i < 5; i++) {
+	    var position = new google.maps.LatLng(southWest.lat() + latSpan * Math.random(), southWest.lng() + lngSpan * Math.random());
+	    markers.push({
+	      position: position,
+	      content: 'This is the secret message'.split(' ')[i],
+	      showInfo: false
+	    });
+	  }
+	  return markers;
+	}
 	
 	var App = function (_Component) {
 	  _inherits(App, _Component);
 	
-	  function App() {
+	  function App(props) {
 	    _classCallCheck(this, App);
 	
-	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+	
+	    _this.state = {
+	      markers: generateInitialMarkers(),
+	      earthquakes: {}
+	    };
+	    _this.fetchData = _this.fetchData.bind(_this);
+	    _this.handleMarkerClick = _this.handleMarkerClick.bind(_this);
+	    _this.handleCloseClick = _this.handleCloseClick.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(App, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.fetchData();
+	    }
+	  }, {
+	    key: 'fetchData',
+	    value: function fetchData() {
+	      fetch('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson').then(function (response) {
+	        console.log(this);
+	        if (response.status !== 200) {
+	          console.log('Problem with request ' + response.status);
+	          return;
+	        }
+	        response.json().then(function (data) {
+	          console.log(data);
+	          this.setState({
+	            earthquakes: data.features
+	          });
+	        }.bind(this));
+	      }.bind(this)).catch(function (err) {
+	        console.log('Fetch error', err);
+	      });
+	    }
+	  }, {
+	    key: 'handleMarkerClick',
+	    value: function handleMarkerClick(targetMarker) {
+	      this.setState({
+	        markers: this.state.markers.map(function (marker) {
+	          if (marker === targetMarker) {
+	            return {
+	              marker: marker,
+	              showInfo: true
+	            };
+	          }
+	          return marker;
+	        })
+	      });
+	    }
+	  }, {
+	    key: 'handleCloseClick',
+	    value: function handleCloseClick(targetMarker) {
+	      this.setState({
+	        markers: this.state.markers.map(function (marker) {
+	          if (marker === targetMarker) {
+	            return {
+	              marker: marker,
+	              showInfo: false
+	            };
+	          }
+	          return marker;
+	        })
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -21528,9 +21650,12 @@
 	          null,
 	          'Hello world2.'
 	        ),
-	        _react2.default.createElement(SimpleMapExampleGoogleMap, {
+	        _react2.default.createElement(ClosureListenersExampleGoogleMap, {
 	          containerElement: _react2.default.createElement('div', { style: { height: '100%' } }),
-	          mapElement: _react2.default.createElement('div', { style: { height: '100%' } })
+	          mapElement: _react2.default.createElement('div', { style: { height: '100%' } }),
+	          onMarkerClick: this.handleMarkerClick,
+	          onCloseClick: this.handleCloseClick,
+	          markers: this.state.markers
 	        })
 	      );
 	    }
