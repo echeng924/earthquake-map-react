@@ -4,7 +4,7 @@ import {withGoogleMap, GoogleMap, Circle, InfoWindow} from "react-google-maps";
 const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
   <GoogleMap
     defaultZoom={4}
-    defaultCenter={new google.maps.LatLng(-25.363882, 131.044922)}
+    defaultCenter={new google.maps.LatLng(10, 230)}
   >
     {props.markers.map((marker, index) => {
       const onClick = () => props.onMarkerClick(marker);
@@ -14,53 +14,37 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
         <Circle
           key={index}
           center={marker.position}
-          radius={20000}
+          radius={Math.pow(2, marker.mag) * 2000}
           title={(index + 1).toString()}
           onClick={onClick}
           options={{
-            fillColor: `red`,
+            fillColor: marker.alert,
             fillOpacity: 0.20,
-            strokeColor: `red`,
+            strokeColor: marker.alert,
             strokeOpacity: 1,
             strokeWeight: 1,
           }}
           >
-          {marker.showInfo && (
-            <InfoWindow onCloseClick={onCloseClick}>
+        </Circle>
+      );
+    })}
+    {props.markers.map((marker, index) => {
+      const onClick = () => props.onMarkerClick(marker);
+      const onCloseClick = () => props.onCloseClick(marker);
+
+      return (marker.showInfo?
+          <InfoWindow key={index} onCloseClick={onCloseClick} position={marker.position}>
               <div>
                 <strong>{marker.content}</strong>
                 <br />
                 <em>The contents of this InfoWindow are actually ReactElements.</em>
               </div>
             </InfoWindow>
-          )}
-        </Circle>
+            :null
       );
     })}
   </GoogleMap>
 ));
-
-// function generateInitialMarkers() {
-//   // const southWest = new google.maps.LatLng(-31.203405, 125.244141);
-//   // const northEast = new google.maps.LatLng(-25.363882, 131.044922);
-
-//   // const lngSpan = northEast.lng() - southWest.lng();
-//   // const latSpan = northEast.lat() - southWest.lat();
-
-//   const markers = [];
-//   for (let i = 0; i < this.state.earthquakes; i++) {
-//     const position = new google.maps.LatLng(
-//       this.state.earthquakes[i].geometry.coordinates[0],
-//       this.state.earthquakes[i].geometry.coordinates[0]
-//     );
-//     markers.push({
-//       position,
-//       content: `This is the secret message`.split(` `)[i],
-//       showInfo: false,
-//     });
-//   }
-//   return markers;
-// }
 
 class App extends Component {
   constructor(props) {
@@ -113,10 +97,12 @@ class App extends Component {
       );
       markers.push({
         position,
-        content: `This is the secret message`.split(` `)[i],
+        content: `<div>${this.state.earthquakes[i].properties.title}</div>` +
+                  `<div>${this.state.earthquakes[i].properties.mag}</div>` +
+                  `<div>${this.state.earthquakes[i].properties.tsunami} </div>`,
         showInfo: false,
         alert: this.state.earthquakes[i].properties.alert,
-        mag: this.state.earthquake[i].properties.mag,
+        mag: this.state.earthquakes[i].properties.mag,
       });
     }
     console.log(markers);
@@ -130,7 +116,7 @@ class App extends Component {
       markers: this.state.markers.map(marker => {
         if (marker === targetMarker) {
           return {
-            marker,
+            ...marker,
             showInfo: true,
           };
         }
@@ -144,7 +130,7 @@ class App extends Component {
       markers: this.state.markers.map(marker => {
         if (marker === targetMarker) {
           return {
-            marker,
+            ...marker,
             showInfo: false,
           };
         }

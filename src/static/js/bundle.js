@@ -21485,6 +21485,8 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
@@ -21506,7 +21508,7 @@
 	    _reactGoogleMaps.GoogleMap,
 	    {
 	      defaultZoom: 4,
-	      defaultCenter: new google.maps.LatLng(-25.363882, 131.044922)
+	      defaultCenter: new google.maps.LatLng(10, 230)
 	    },
 	    props.markers.map(function (marker, index) {
 	      var onClick = function onClick() {
@@ -21516,67 +21518,51 @@
 	        return props.onCloseClick(marker);
 	      };
 	
-	      return _react2.default.createElement(
-	        _reactGoogleMaps.Circle,
-	        {
-	          key: index,
-	          center: marker.position,
-	          radius: 20000,
-	          title: (index + 1).toString(),
-	          onClick: onClick,
-	          options: {
-	            fillColor: 'red',
-	            fillOpacity: 0.20,
-	            strokeColor: 'red',
-	            strokeOpacity: 1,
-	            strokeWeight: 1
-	          }
-	        },
-	        marker.showInfo && _react2.default.createElement(
-	          _reactGoogleMaps.InfoWindow,
-	          { onCloseClick: onCloseClick },
+	      return _react2.default.createElement(_reactGoogleMaps.Circle, {
+	        key: index,
+	        center: marker.position,
+	        radius: Math.pow(2, marker.mag) * 2000,
+	        title: (index + 1).toString(),
+	        onClick: onClick,
+	        options: {
+	          fillColor: marker.alert,
+	          fillOpacity: 0.20,
+	          strokeColor: marker.alert,
+	          strokeOpacity: 1,
+	          strokeWeight: 1
+	        }
+	      });
+	    }),
+	    props.markers.map(function (marker, index) {
+	      var onClick = function onClick() {
+	        return props.onMarkerClick(marker);
+	      };
+	      var onCloseClick = function onCloseClick() {
+	        return props.onCloseClick(marker);
+	      };
+	
+	      return marker.showInfo ? _react2.default.createElement(
+	        _reactGoogleMaps.InfoWindow,
+	        { key: index, onCloseClick: onCloseClick, position: marker.position },
+	        _react2.default.createElement(
+	          'div',
+	          null,
 	          _react2.default.createElement(
-	            'div',
+	            'strong',
 	            null,
-	            _react2.default.createElement(
-	              'strong',
-	              null,
-	              marker.content
-	            ),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	              'em',
-	              null,
-	              'The contents of this InfoWindow are actually ReactElements.'
-	            )
+	            marker.content
+	          ),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement(
+	            'em',
+	            null,
+	            'The contents of this InfoWindow are actually ReactElements.'
 	          )
 	        )
-	      );
+	      ) : null;
 	    })
 	  );
 	});
-	
-	// function generateInitialMarkers() {
-	//   // const southWest = new google.maps.LatLng(-31.203405, 125.244141);
-	//   // const northEast = new google.maps.LatLng(-25.363882, 131.044922);
-	
-	//   // const lngSpan = northEast.lng() - southWest.lng();
-	//   // const latSpan = northEast.lat() - southWest.lat();
-	
-	//   const markers = [];
-	//   for (let i = 0; i < this.state.earthquakes; i++) {
-	//     const position = new google.maps.LatLng(
-	//       this.state.earthquakes[i].geometry.coordinates[0],
-	//       this.state.earthquakes[i].geometry.coordinates[0]
-	//     );
-	//     markers.push({
-	//       position,
-	//       content: `This is the secret message`.split(` `)[i],
-	//       showInfo: false,
-	//     });
-	//   }
-	//   return markers;
-	// }
 	
 	var App = function (_Component) {
 	  _inherits(App, _Component);
@@ -21635,10 +21621,10 @@
 	        var position = new google.maps.LatLng(this.state.earthquakes[i].geometry.coordinates[1], this.state.earthquakes[i].geometry.coordinates[0]);
 	        markers.push({
 	          position: position,
-	          content: 'This is the secret message'.split(' ')[i],
+	          content: '<div>' + this.state.earthquakes[i].properties.title + '</div>' + ('<div>' + this.state.earthquakes[i].properties.mag + '</div>') + ('<div>' + this.state.earthquakes[i].properties.tsunami + ' </div>'),
 	          showInfo: false,
 	          alert: this.state.earthquakes[i].properties.alert,
-	          mag: this.state.earthquake[i].properties.mag
+	          mag: this.state.earthquakes[i].properties.mag
 	        });
 	      }
 	      console.log(markers);
@@ -21652,10 +21638,9 @@
 	      this.setState({
 	        markers: this.state.markers.map(function (marker) {
 	          if (marker === targetMarker) {
-	            return {
-	              marker: marker,
+	            return _extends({}, marker, {
 	              showInfo: true
-	            };
+	            });
 	          }
 	          return marker;
 	        })
@@ -21667,10 +21652,9 @@
 	      this.setState({
 	        markers: this.state.markers.map(function (marker) {
 	          if (marker === targetMarker) {
-	            return {
-	              marker: marker,
+	            return _extends({}, marker, {
 	              showInfo: false
-	            };
+	            });
 	          }
 	          return marker;
 	        })
