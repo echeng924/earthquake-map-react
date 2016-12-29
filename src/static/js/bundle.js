@@ -21621,7 +21621,7 @@
 	        var position = new google.maps.LatLng(this.state.earthquakes[i].geometry.coordinates[1], this.state.earthquakes[i].geometry.coordinates[0]);
 	        markers.push({
 	          position: position,
-	          content: '<div>' + this.state.earthquakes[i].properties.title + '</div>' + ('<div>' + this.state.earthquakes[i].properties.mag + '</div>') + ('<div>' + this.state.earthquakes[i].properties.tsunami + ' </div>'),
+	          content: '<div>this.state.earthquakes[i].properties.title</div>\n                  <div>this.state.earthquakes[i].properties.mag</div>\n                  <div>this.state.earthquakes[i].properties.tsunami </div>',
 	          showInfo: false,
 	          alert: this.state.earthquakes[i].properties.alert,
 	          mag: this.state.earthquakes[i].properties.mag

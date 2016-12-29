@@ -35,9 +35,9 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
       return (marker.showInfo?
           <InfoWindow key={index} onCloseClick={onCloseClick} position={marker.position}>
               <div>
-                <strong>{marker.content}</strong>
-                <br />
-                <em>The contents of this InfoWindow are actually ReactElements.</em>
+                <div><strong>Title:</strong>{marker.title}</div>
+                <div><strong>Title:</strong>{marker.title}</div>
+
               </div>
             </InfoWindow>
             :null
@@ -87,6 +87,7 @@ class App extends Component {
 
   createMarkers() {
     let markers = [];
+    let properties = this.state.earthquake.properties
     // console.log(this.state.earthquakes);
     // console.log(this.state.earthquakes[0].geometry.coordinates[1]);
     for (let i = 0; i < this.state.earthquakes.length; i++) {
@@ -95,11 +96,13 @@ class App extends Component {
         this.state.earthquakes[i].geometry.coordinates[1],
         this.state.earthquakes[i].geometry.coordinates[0]
       );
+      let convertedDate = new Date(this.state.earthquakes[i].time);
       markers.push({
         position,
-        content: `<div>${this.state.earthquakes[i].properties.title}</div>` +
-                  `<div>${this.state.earthquakes[i].properties.mag}</div>` +
-                  `<div>${this.state.earthquakes[i].properties.tsunami} </div>`,
+        title: this.state.earthquakes[i].properties.title,
+        time: convertedDate,
+        mag: this.state.earthquakes[i].properties.mag,
+        tsunami: this.state.earthquakes[i].properties.tsunami,
         showInfo: false,
         alert: this.state.earthquakes[i].properties.alert,
         mag: this.state.earthquakes[i].properties.mag,
