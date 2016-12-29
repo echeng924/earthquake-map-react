@@ -150,6 +150,7 @@ class App extends Component {
       <div id='container'>
         <h3>Things to note: </h3>
         <ul>
+          <li>Zoom in and click on marker to expand details of earthquake.</li>
           <li>Colored alert system indicates the estimated economic and human losses of the earthquake in the crucial, initial hours after an event.</li>
           <li>Size of circle represents magnitude.</li>
           <li>Tsunami: 1 indicates oceanic regions, 0 otherwise</li>

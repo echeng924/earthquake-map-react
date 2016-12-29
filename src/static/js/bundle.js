@@ -21712,6 +21712,11 @@
 	          _react2.default.createElement(
 	            'li',
 	            null,
+	            'Zoom in and click on marker to expand details on earthquake.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
 	            'Colored alert system indicates the estimated economic and human losses of the earthquake in the crucial, initial hours after an event.'
 	          ),
 	          _react2.default.createElement(
