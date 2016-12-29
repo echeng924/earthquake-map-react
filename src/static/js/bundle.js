@@ -21712,7 +21712,7 @@
 	          _react2.default.createElement(
 	            'li',
 	            null,
-	            'Zoom in and click on marker to expand details on earthquake.'
+	            'Zoom in and click on marker to expand details of individual earthquake.'
 	          ),
 	          _react2.default.createElement(
 	            'li',
