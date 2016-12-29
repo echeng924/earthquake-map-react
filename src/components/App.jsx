@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import {withGoogleMap, GoogleMap, Circle, InfoWindow} from "react-google-maps";
 
-const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
+const MapWithClosures = withGoogleMap(props => (
   <GoogleMap
-    defaultZoom={4}
+    defaultZoom={3}
     defaultCenter={new google.maps.LatLng(10, 230)}
   >
+
+
     {props.markers.map((marker, index) => {
       const onClick = () => props.onMarkerClick(marker);
       const onCloseClick = () => props.onCloseClick(marker);
@@ -35,9 +37,10 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
       return (marker.showInfo?
           <InfoWindow key={index} onCloseClick={onCloseClick} position={marker.position}>
               <div>
-                <div><strong>Title:</strong>{marker.title}</div>
-                <div><strong>Title:</strong>{marker.title}</div>
-
+                <div><strong>Title: </strong>{marker.title}</div>
+                <div><strong>Time: </strong>{marker.time.toString()}</div>
+                <div><strong>Magnitude: </strong>{marker.mag}</div>
+                <div><strong>Tsunami: </strong>{marker.tsunami}</div>
               </div>
             </InfoWindow>
             :null
@@ -87,7 +90,7 @@ class App extends Component {
 
   createMarkers() {
     let markers = [];
-    let properties = this.state.earthquake.properties
+    // let properties = this.state.earthquake.properties
     // console.log(this.state.earthquakes);
     // console.log(this.state.earthquakes[0].geometry.coordinates[1]);
     for (let i = 0; i < this.state.earthquakes.length; i++) {
@@ -96,11 +99,11 @@ class App extends Component {
         this.state.earthquakes[i].geometry.coordinates[1],
         this.state.earthquakes[i].geometry.coordinates[0]
       );
-      let convertedDate = new Date(this.state.earthquakes[i].time);
+      // let convertedDate = new Date(this.state.earthquakes[i].properties.time);
       markers.push({
         position,
         title: this.state.earthquakes[i].properties.title,
-        time: convertedDate,
+        time: new Date(this.state.earthquakes[i].properties.time),
         mag: this.state.earthquakes[i].properties.mag,
         tsunami: this.state.earthquakes[i].properties.tsunami,
         showInfo: false,
@@ -144,21 +147,24 @@ class App extends Component {
 
   render() {
     return (
-      <div style={{height:'100%'}}>
-        <div>
-          Hello world2.
-        </div>
-      <ClosureListenersExampleGoogleMap
-        containerElement={
-          <div style={{ height: `100%` }} />
-        }
-        mapElement={
-          <div style={{ height: `100%` }} />
-        }
-        onMarkerClick={this.handleMarkerClick}
-        onCloseClick={this.handleCloseClick}
-        markers={this.state.markers}
-      />
+      <div id='container'>
+        <h3>Things to note: </h3>
+        <ul>
+          <li>Colored alert system indicates the estimated economic and human losses of the earthquake in the crucial, initial hours after an event.</li>
+          <li>Size of circle represents magnitude.</li>
+          <li>Tsunami: 1 indicates oceanic regions, 0 otherwise</li>
+        </ul>
+        <MapWithClosures
+          containerElement={
+            <div style={{ height: `90%` }} />
+          }
+          mapElement={
+            <div style={{ height: `90%` }} />
+          }
+          onMarkerClick={this.handleMarkerClick}
+          onCloseClick={this.handleCloseClick}
+          markers={this.state.markers}
+        />
     </div>
     );
   };

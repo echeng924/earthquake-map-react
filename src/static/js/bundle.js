@@ -21497,17 +21497,19 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ClosureListenersExampleGoogleMap = (0, _reactGoogleMaps.withGoogleMap)(function (props) {
+	var MapWithClosures = (0, _reactGoogleMaps.withGoogleMap)(function (props) {
 	  return _react2.default.createElement(
 	    _reactGoogleMaps.GoogleMap,
 	    {
-	      defaultZoom: 4,
+	      defaultZoom: 3,
 	      defaultCenter: new google.maps.LatLng(10, 230)
 	    },
 	    props.markers.map(function (marker, index) {
@@ -21548,15 +21550,44 @@
 	          'div',
 	          null,
 	          _react2.default.createElement(
-	            'strong',
+	            'div',
 	            null,
-	            marker.content
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Title: '
+	            ),
+	            marker.title
 	          ),
-	          _react2.default.createElement('br', null),
 	          _react2.default.createElement(
-	            'em',
+	            'div',
 	            null,
-	            'The contents of this InfoWindow are actually ReactElements.'
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Time: '
+	            ),
+	            marker.time.toString()
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Magnitude: '
+	            ),
+	            marker.mag
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'strong',
+	              null,
+	              'Tsunami: '
+	            ),
+	            marker.tsunami
 	          )
 	        )
 	      ) : null;
@@ -21614,18 +21645,22 @@
 	    key: 'createMarkers',
 	    value: function createMarkers() {
 	      var markers = [];
+	      // let properties = this.state.earthquake.properties
 	      // console.log(this.state.earthquakes);
 	      // console.log(this.state.earthquakes[0].geometry.coordinates[1]);
 	      for (var i = 0; i < this.state.earthquakes.length; i++) {
 	        //this.state.earthquakes.forEach(()
 	        var position = new google.maps.LatLng(this.state.earthquakes[i].geometry.coordinates[1], this.state.earthquakes[i].geometry.coordinates[0]);
-	        markers.push({
+	        // let convertedDate = new Date(this.state.earthquakes[i].properties.time);
+	        markers.push(_defineProperty({
 	          position: position,
-	          content: '<div>this.state.earthquakes[i].properties.title</div>\n                  <div>this.state.earthquakes[i].properties.mag</div>\n                  <div>this.state.earthquakes[i].properties.tsunami </div>',
+	          title: this.state.earthquakes[i].properties.title,
+	          time: new Date(this.state.earthquakes[i].properties.time),
+	          mag: this.state.earthquakes[i].properties.mag,
+	          tsunami: this.state.earthquakes[i].properties.tsunami,
 	          showInfo: false,
-	          alert: this.state.earthquakes[i].properties.alert,
-	          mag: this.state.earthquakes[i].properties.mag
-	        });
+	          alert: this.state.earthquakes[i].properties.alert
+	        }, 'mag', this.state.earthquakes[i].properties.mag));
 	      }
 	      console.log(markers);
 	      this.setState({
@@ -21665,15 +21700,34 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { style: { height: '100%' } },
+	        { id: 'container' },
 	        _react2.default.createElement(
-	          'div',
+	          'h3',
 	          null,
-	          'Hello world2.'
+	          'Things to note: '
 	        ),
-	        _react2.default.createElement(ClosureListenersExampleGoogleMap, {
-	          containerElement: _react2.default.createElement('div', { style: { height: '100%' } }),
-	          mapElement: _react2.default.createElement('div', { style: { height: '100%' } }),
+	        _react2.default.createElement(
+	          'ul',
+	          null,
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Colored alert system indicates the estimated economic and human losses of the earthquake in the crucial, initial hours after an event.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Size of circle represents magnitude.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Tsunami: 1 indicates oceanic regions, 0 otherwise'
+	          )
+	        ),
+	        _react2.default.createElement(MapWithClosures, {
+	          containerElement: _react2.default.createElement('div', { style: { height: '90%' } }),
+	          mapElement: _react2.default.createElement('div', { style: { height: '90%' } }),
 	          onMarkerClick: this.handleMarkerClick,
 	          onCloseClick: this.handleCloseClick,
 	          markers: this.state.markers
