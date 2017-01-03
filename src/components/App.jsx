@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {withGoogleMap, GoogleMap, Circle, InfoWindow} from "react-google-maps";
+import Table from './table.jsx';
 
 const MapWithClosures = withGoogleMap(props => (
   <GoogleMap
@@ -157,15 +158,20 @@ class App extends Component {
         </ul>
         <MapWithClosures
           containerElement={
-            <div style={{ height: `90%` }} />
+            <div style={{ height: `50%` }} />
           }
           mapElement={
-            <div style={{ height: `90%` }} />
+            <div style={{ height: `100%` }} />
           }
           onMarkerClick={this.handleMarkerClick}
           onCloseClick={this.handleCloseClick}
           markers={this.state.markers}
         />
+        <div id='table'>
+          <Table 
+            earthquakeData={this.state.earthquakes}
+          />
+        </div>
     </div>
     );
   };
