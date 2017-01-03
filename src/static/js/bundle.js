@@ -21495,6 +21495,10 @@
 	
 	var _reactGoogleMaps = __webpack_require__(179);
 	
+	var _table = __webpack_require__(495);
+	
+	var _table2 = _interopRequireDefault(_table);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -21731,12 +21735,19 @@
 	          )
 	        ),
 	        _react2.default.createElement(MapWithClosures, {
-	          containerElement: _react2.default.createElement('div', { style: { height: '90%' } }),
-	          mapElement: _react2.default.createElement('div', { style: { height: '90%' } }),
+	          containerElement: _react2.default.createElement('div', { style: { height: '50%' } }),
+	          mapElement: _react2.default.createElement('div', { style: { height: '100%' } }),
 	          onMarkerClick: this.handleMarkerClick,
 	          onCloseClick: this.handleCloseClick,
 	          markers: this.state.markers
-	        })
+	        }),
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'table' },
+	          _react2.default.createElement(_table2.default, {
+	            earthquakeData: this.state.earthquakes
+	          })
+	        )
 	      );
 	    }
 	  }]);
@@ -32892,6 +32903,154 @@
 	
 	module.exports = isIterateeCall;
 
+
+/***/ },
+/* 495 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// import TableRow from './tableRow.jsx';
+	
+	var propTypes = {
+		earthquakeData: _react2.default.PropTypes.array
+	};
+	
+	var Table = function (_Component) {
+		_inherits(Table, _Component);
+	
+		function Table(props) {
+			_classCallCheck(this, Table);
+	
+			var _this = _possibleConstructorReturn(this, (Table.__proto__ || Object.getPrototypeOf(Table)).call(this, props));
+	
+			_this.state = {
+				sorted: false
+			};
+			_this.sortColumn = _this.sortColumn.bind(_this);
+			return _this;
+		}
+	
+		_createClass(Table, [{
+			key: 'sortColumn',
+			value: function sortColumn(column) {
+				console.log(column);
+				this.props.earthquakeData.sort(function (a, b) {
+					var A = a.properties[column];
+					var B = b.properties[column];
+					if (typeof A == 'string') {
+						A = A.toUpperCase();
+						B = B.toUpperCase();
+					}
+					if (A > B) {
+						return 1;
+					}if (A < B) {
+						return -1;
+					} else {
+						return 0;
+					}
+				});
+				this.setState({
+					sorted: true
+				});
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
+	
+				var tableElements = this.props.earthquakeData.map(function (earthquake, id) {
+					return _react2.default.createElement(
+						'tr',
+						{ key: id },
+						_react2.default.createElement(
+							'td',
+							null,
+							earthquake.properties.title
+						),
+						_react2.default.createElement(
+							'td',
+							null,
+							earthquake.properties.mag
+						),
+						_react2.default.createElement(
+							'td',
+							null,
+							earthquake.properties.tsunami
+						)
+					);
+				});
+				return _react2.default.createElement(
+					'table',
+					null,
+					_react2.default.createElement(
+						'tbody',
+						null,
+						_react2.default.createElement(
+							'tr',
+							null,
+							_react2.default.createElement(
+								'th',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ onClick: function onClick() {
+											return _this2.sortColumn('title');
+										} },
+									'Title'
+								)
+							),
+							_react2.default.createElement(
+								'th',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ onClick: function onClick() {
+											return _this2.sortColumn('mag');
+										} },
+									'Magnitude'
+								)
+							),
+							_react2.default.createElement(
+								'th',
+								null,
+								_react2.default.createElement(
+									'a',
+									{ onClick: function onClick() {
+											return _this2.sortColumn('tsunami');
+										} },
+									'Tsunami'
+								)
+							)
+						),
+						tableElements
+					)
+				);
+			}
+		}]);
+	
+		return Table;
+	}(_react.Component);
+	
+	exports.default = Table;
 
 /***/ }
 /******/ ]);
