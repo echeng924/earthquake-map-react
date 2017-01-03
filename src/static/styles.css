@@ -1,5 +1,6 @@
 body {
   background-color: lightblue;
+  font-family: 'Lato', sans-serif;
 }
 
 html, body, #root {
@@ -8,4 +9,10 @@ html, body, #root {
 
 #container {
   height: 100%;
+}
+
+#table {
+	height:30%;
+	overflow-y: scroll;
+	margin: 1rem;
 }
